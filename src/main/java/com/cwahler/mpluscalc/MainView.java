@@ -78,6 +78,7 @@ public class MainView extends VerticalLayout {
 
 		grid.setColumns("name", "fortLevel", "tyranLevel", "fortScore", "tyranScore");
 		grid.addColumn(new NumberRenderer<>(Dungeon::getTotalScore, "%(,.1f", getLocale())).setHeader("Total Score");
+		grid.addColumn(new NumberRenderer<>(Dungeon::getPercentRemaining, "%.1f%%", getLocale())).setHeader("Percent Remaining");
 
 		// Initialize listing
 		listDungeons(null);
