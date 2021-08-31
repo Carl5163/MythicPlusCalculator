@@ -1,10 +1,10 @@
-package com.cwahler.mythicpluscalculator;
+package com.cwahler.mpluscalc;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MythicpluscalculatorApplicationTests {
+class ApplicationTests {
 
 	@Test
 	void contextLoads() {

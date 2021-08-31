@@ -1,4 +1,4 @@
-package com.cwahler.mythicpluscalculator;
+package com.cwahler.mpluscalc;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +18,7 @@ public class Dungeon {
     private double fortScore = 0;
     private double tyranScore = 0;
     private double totalScore = 0;
+    private double percentRemaining = 0;
 
     protected Dungeon(){}
 
@@ -29,7 +30,6 @@ public class Dungeon {
         this.tyranScore = tyranScore;
         this.setTotalScore();
     }
-
 
     public String getName() {
         return this.name;
@@ -75,6 +75,13 @@ public class Dungeon {
 
     public Double getTotalScore() {
         return this.totalScore;
+    }
+    
+    public double getPercentRemaining() {
+        return percentRemaining;
+    }
+    public void setPercentRemaining(double percentRemaining) {
+        this.percentRemaining = percentRemaining;
     }
 
     public void setTotalScore() {

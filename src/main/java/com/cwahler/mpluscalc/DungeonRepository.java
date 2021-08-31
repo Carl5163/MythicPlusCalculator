@@ -1,4 +1,4 @@
-package com.cwahler.mythicpluscalculator;
+package com.cwahler.mpluscalc;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

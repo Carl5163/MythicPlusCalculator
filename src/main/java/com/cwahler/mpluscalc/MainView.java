@@ -1,26 +1,29 @@
-package com.cwahler.mythicpluscalculator;
+package com.cwahler.mpluscalc;
 
 
-
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.NumberRenderer;
-import com.vaadin.flow.router.Route;
-import org.springframework.util.StringUtils;
-
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-import java.util.List;
-import java.util.ArrayList;  
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.*;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.renderer.NumberRenderer;
+import com.vaadin.flow.router.Route;
 
 
 
@@ -34,19 +37,33 @@ public class MainView extends VerticalLayout {
 	TextField region = new TextField("Region");
 	TextField realm = new TextField("Realm");
 	TextField name = new TextField("Character Name");
+
+	private final DungeonEditor editor;
 	
+
 	private Button reloadButton;
 
 	// private final Button addNewBtn;
 
-	public MainView(DungeonRepository repo) {
+	public MainView(DungeonRepository repo, DungeonEditor editor) {
 		this.repo = repo;
 		this.grid = new Grid<>(Dungeon.class);
+		this.editor = editor;
 
 		HorizontalLayout actions = new HorizontalLayout(region, realm, name);
 		add(actions);
+		
+		grid.asSingleSelect().addValueChangeListener(e -> {
+			editor.editDungeon(e.getValue());
+		});
+		
+		editor.setChangeHandler(() -> {
+			editor.setVisible(false);
+			listDungeons("");
+		});
+		
 
-		this.reloadButton = new Button("Load Actual Scores", VaadinIcon.RECYCLE.create());
+		this.reloadButton = new Button("Load Actual Scores", VaadinIcon.REFRESH.create());
 		reloadButton.addClickListener(e -> {
 			// save a couple of dungeons
 			repo.deleteAll();
@@ -57,7 +74,7 @@ public class MainView extends VerticalLayout {
 		add(reloadButton);
 
 		// build layout
-		add(grid);
+		add(grid, editor);
 
 		grid.setColumns("name", "fortLevel", "tyranLevel", "fortScore", "tyranScore");
 		grid.addColumn(new NumberRenderer<>(Dungeon::getTotalScore, "%(,.1f", getLocale())).setHeader("Total Score");
@@ -112,7 +129,20 @@ public class MainView extends VerticalLayout {
 				dungeons.add(d);
 			}
 
+			Span s = new Span("Lookup Successful!");
+			Notification n = new Notification(s);
+			n.getElement().getThemeList().add("success");
+			n.setDuration(2000);
+			n.setPosition(Notification.Position.TOP_CENTER);
+			n.open();
+
 		} catch (RestClientException e) {
+			Span s = new Span("Lookup Failed");
+			Notification n = new Notification(s);
+			n.getElement().getThemeList().add("error");
+			n.setDuration(2000);
+			n.setPosition(Notification.Position.TOP_CENTER);
+			n.open();
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();

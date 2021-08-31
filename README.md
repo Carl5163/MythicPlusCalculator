@@ -1,1 +1,0 @@
-MythicPlusCalculator
