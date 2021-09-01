@@ -19,6 +19,11 @@ public class Dungeon {
     private double tyranScore = 0;
     private double totalScore = 0;
     private double percentRemaining = 0;
+    
+    public static double[] BASE = {	  0,    
+    								  0, 40, 45, 55, 60, 65, 75, 80, 85,100,
+    								105,110,115,120,125,130,135,140,145,150,
+    								155,160,165,170,175,180,185,190,195,200};
 
     protected Dungeon(){}
 
@@ -29,6 +34,31 @@ public class Dungeon {
         this.fortScore = fortScore;
         this.tyranScore = tyranScore;
         this.setTotalScore();
+    }
+    
+    public void update(String affix, double percentRemaining) {
+    	fortScore = BASE[fortLevel];
+    	tyranScore = BASE[tyranLevel];
+    	double bonus = 0;
+    	if(percentRemaining >= -40 && percentRemaining < 0) {
+    		bonus = (15d/40d)*percentRemaining;
+    	} else if(percentRemaining > 0 && percentRemaining <= 40) {
+    		bonus = (7.5d/40d)*percentRemaining;
+    	}
+    	
+    	if(affix.equals("Fortified")) {
+    		fortScore += bonus;
+    	} else {
+    		tyranScore += bonus;
+    	}
+    	if(fortScore > tyranScore) {
+    		fortScore *= 1.5;
+    		tyranScore *= .5;
+    	} else {
+    		tyranScore *= 1.5;
+    		fortScore *= .5;
+    	}
+    	setTotalScore();
     }
 
     public String getName() {

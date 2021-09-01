@@ -50,6 +50,12 @@ public class MainView extends VerticalLayout {
 		this.grid = new Grid<>(Dungeon.class);
 		this.editor = editor;
 
+		//TODO: Remove this
+		region.setValue("us");
+		realm.setValue("thunderlord");
+		name.setValue("gaulis");
+		
+		
 		HorizontalLayout actions = new HorizontalLayout(region, realm, name);
 		add(actions);
 		
@@ -57,7 +63,9 @@ public class MainView extends VerticalLayout {
 			editor.editDungeon(e.getValue());
 		});
 		
-		editor.setChangeHandler(() -> {
+		editor.setChangeHandler((dungeon, affix, percentRemaining) -> {
+			updateDungeon(dungeon, affix, percentRemaining);
+			repo.save(dungeon);
 			editor.setVisible(false);
 			listDungeons("");
 		});
@@ -76,9 +84,11 @@ public class MainView extends VerticalLayout {
 		// build layout
 		add(grid, editor);
 
-		grid.setColumns("name", "fortLevel", "tyranLevel", "fortScore", "tyranScore");
+		grid.setColumns("name", "fortLevel", "tyranLevel");
+		grid.addColumn(new NumberRenderer<>(Dungeon::getFortScore, "%(,.1f", getLocale())).setHeader("Fortified Score");
+		grid.addColumn(new NumberRenderer<>(Dungeon::getTyranScore, "%(,.1f", getLocale())).setHeader("Tyranical Score");
 		grid.addColumn(new NumberRenderer<>(Dungeon::getTotalScore, "%(,.1f", getLocale())).setHeader("Total Score");
-		grid.addColumn(new NumberRenderer<>(Dungeon::getPercentRemaining, "%.1f%%", getLocale())).setHeader("Percent Remaining");
+//		grid.addColumn(new NumberRenderer<>(Dungeon::getPercentRemaining, "%.1f%%", getLocale())).setHeader("Percent Remaining");
 
 		// Initialize listing
 		listDungeons(null);
@@ -95,6 +105,10 @@ public class MainView extends VerticalLayout {
 	}
 	// end::listDungeons[]
 
+	private void updateDungeon(Dungeon dungeon, String affix, Double percentRemaining) {
+		dungeon.update(affix, percentRemaining);
+	}
+	
 	private List<Dungeon> getBestDungeons(String region, String realm, String name) {
 		List<Dungeon> dungeons = new ArrayList<Dungeon>();
 		final String uri = "https://raider.io/api/v1/characters/profile?region=" + region + "&realm=" + realm + "&name=" + name + "&fields=mythic_plus_best_runs";
@@ -115,7 +129,7 @@ public class MainView extends VerticalLayout {
 					(String)djson.get("dungeon"), 
 					((Long)djson.get("mythic_level")).intValue(), 
 					0, 
-					((Double)djson.get("score")),
+					((Double)djson.get("score"))*1.5,
 					0);
 				} else {
 					d = new Dungeon(
@@ -123,7 +137,7 @@ public class MainView extends VerticalLayout {
 					0, 
 					((Long)djson.get("mythic_level")).intValue(), 
 					0,
-					((Double)djson.get("score")));
+					((Double)djson.get("score"))*1.5);
 				}
 
 				
@@ -171,10 +185,10 @@ public class MainView extends VerticalLayout {
 					JSONArray affixArray = ((JSONArray)djson.get("affixes"));
 					if(((String)(((JSONObject)affixArray.get(0)).get("name"))).equals("Fortified")) {
 						dBest.setFortLevel(((Long)djson.get("mythic_level")).intValue());
-						dBest.setFortScore(((Number)djson.get("score")).doubleValue());
+						dBest.setFortScore(((Number)djson.get("score")).doubleValue()*.5);
 					} else {
 						dBest.setTyranLevel(((Long)djson.get("mythic_level")).intValue());
-						dBest.setTyranScore(((Number)djson.get("score")).doubleValue());
+						dBest.setTyranScore(((Number)djson.get("score")).doubleValue()*.5);
 					}
 					repository.save(dBest);
 				}

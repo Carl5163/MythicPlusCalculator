@@ -9,6 +9,8 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToDoubleConverter;
@@ -40,15 +42,18 @@ public class DungeonEditor extends VerticalLayout implements KeyNotifier {
 	TextField tyranLevel = new TextField("tyranLevel");
 	TextField percentRemaining = new TextField("percentRemaining");
 
+	RadioButtonGroup<String> rbg = new RadioButtonGroup<String>();
+	
 	/* Action buttons */
 	// TODO why more code?
 	Button save = new Button("Save", VaadinIcon.CHECK.create());
 	Button cancel = new Button("Cancel");
 	HorizontalLayout actions = new HorizontalLayout(save, cancel);
+	
 
 	Binder<Dungeon> binder = new Binder<>(Dungeon.class);
 	private ChangeHandler changeHandler;
-
+	
 	@Autowired
 	public DungeonEditor(DungeonRepository repository) {
 		this.repository = repository;
@@ -57,10 +62,26 @@ public class DungeonEditor extends VerticalLayout implements KeyNotifier {
 		percentRemaining.setLabel("");
 		percentRemaining.setValue("0");
 		
+
+		rbg.setLabel("Affix");
+		rbg.setItems("Fortified", "Tyranical");
+		rbg.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
+		rbg.setValue("Fortified");
+		rbg.addValueChangeListener(event -> {
+			if(event.getValue().equals("Fortified")) {
+				tyranLevel.setVisible(false);
+				fortLevel.setVisible(true);
+			} else {
+				tyranLevel.setVisible(true);
+				fortLevel.setVisible(false);
+			}
+		});
+		
 		fortLevel.setLabel("Fortified Level");
 		tyranLevel.setLabel("Tyranical Level");
+		tyranLevel.setVisible(false);
 		
-		add(fortLevel, tyranLevel, pRem, percentRemaining, actions);
+		add(fortLevel, tyranLevel, rbg, pRem, percentRemaining, actions);
 
 
 		binder.forField ( this.fortLevel )
@@ -90,14 +111,23 @@ public class DungeonEditor extends VerticalLayout implements KeyNotifier {
 		cancel.addClickListener(e -> editDungeon(dungeon));
 		setVisible(false);
 	}
+	
+	@Override
+	public
+	void setVisible(boolean visible) {
+		if(visible) {
+			rbg.setValue("Fortified");
+		}
+		super.setVisible(visible);
+	}
 
 	void save() {
 		repository.save(dungeon);
-		changeHandler.onChange();
+		changeHandler.onChange(dungeon, rbg.getValue(), Double.parseDouble(percentRemaining.getValue()));
 	}
 
 	public interface ChangeHandler {
-		void onChange();
+		void onChange(Dungeon dungeon, String affix, Double percent);
 	}
 
 	public final void editDungeon(Dungeon c) {

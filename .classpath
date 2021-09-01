@@ -20,7 +20,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-16/"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/"/>
 	<classpathentry kind="lib" path="C:/Users/carlj/.gradle/caches/modules-2/files-2.1/com.vaadin/vaadin-spring-boot-starter/14.6.8/ea3b0f343df1e5ffd28ff5e71ac83530af81cb8/vaadin-spring-boot-starter-14.6.8.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
