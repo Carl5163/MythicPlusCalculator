@@ -41,8 +41,12 @@
     "lit-html": "1.4.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.4",
+    "@babel/preset-env": "^7.15.4",
+    "babel-loader": "^8.2.2",
     "chokidar": "^3.5.0",
     "compression-webpack-plugin": "4.0.1",
+    "construct-style-sheets-polyfill": "2.4.6",
     "copy-webpack-plugin": "5.1.2",
     "css-loader": "4.2.1",
     "extra-watch-webpack-plugin": "1.0.3",
@@ -52,7 +56,7 @@
     "raw-loader": "3.1.0",
     "ts-loader": "8.0.12",
     "typescript": "4.0.3",
-    "webpack": "4.42.0",
+    "webpack": "^4.42.0",
     "webpack-babel-multi-target-plugin": "2.3.3",
     "webpack-cli": "3.3.11",
     "webpack-dev-server": "3.11.0",
@@ -105,6 +109,7 @@
     "devDependencies": {
       "chokidar": "^3.5.0",
       "compression-webpack-plugin": "4.0.1",
+      "construct-style-sheets-polyfill": "2.4.6",
       "copy-webpack-plugin": "5.1.2",
       "css-loader": "4.2.1",
       "extra-watch-webpack-plugin": "1.0.3",
@@ -120,6 +125,6 @@
       "webpack-dev-server": "3.11.0",
       "webpack-merge": "4.2.2"
     },
-    "hash": "1a498d940175239e479156d12cb11db44bbdbd2de80e31eeb7e2a17c9167e945"
+    "hash": "d54f8fbf7d121dfd39cdac0fc5d3963e7271fe82787dac2300e159e5b7e355a2"
   }
 }
